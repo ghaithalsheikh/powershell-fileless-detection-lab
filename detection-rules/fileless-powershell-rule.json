@@ -1,1 +1,18 @@
-{"id":"a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d","rule_id":"fileless-powershell-download-execute","name":"Fileless PowerShell Download & Execute (IEX / WebClient)","description":"Detects PowerShell Script Block Logging (Event ID 4104) content containing common fileless / Living-off-the-Land download-and-execute indicators such as IEX, Invoke-Expression, DownloadString, WebClient, encoded commands, or AMSI/execution-policy bypass flags. These patterns are frequently used by attackers to download and run malicious code entirely in memory, without writing a file to disk.","risk_score":75,"severity":"high","type":"query","language":"kuery","query":"event.code:\"4104\" and powershell.file.script_block_text:(\"*IEX*\" or \"*Invoke-Expression*\" or \"*DownloadString*\" or \"*WebClient*\" or \"*Invoke-WebRequest*\" or \"*http://*\" or \"*https://*\" or \"*FromBase64String*\" or \"*EncodedCommand*\" or \"*Start-Process*\" or \"*Add-MpPreference*\" or \"*-w hidden*\" or \"*-ep bypass*\" or \"*AMSI*\" or \"*Reflection.Assembly*\")","index":["winlogbeat-*"],"interval":"5m","from":"now-6m","to":"now","enabled":true,"immutable":false,"tags":["Blue Team","PowerShell","Fileless Malware","Living off the Land","Home Lab"],"threat":[{"framework":"MITRE ATT&CK","tactic":{"id":"TA0002","name":"Execution","reference":"https://attack.mitre.org/tactics/TA0002/"},"technique":[{"id":"T1059.001","name":"PowerShell","reference":"https://attack.mitre.org/techniques/T1059/001/"}]},{"framework":"MITRE ATT&CK","tactic":{"id":"TA0005","name":"Defense Evasion","reference":"https://attack.mitre.org/tactics/TA0005/"},"technique":[{"id":"T1027","name":"Obfuscated Files or Information","reference":"https://attack.mitre.org/techniques/T1027/"}]}],"false_positives":["Legitimate administrative scripts that use Invoke-WebRequest or Invoke-Expression for software deployment or automation should be reviewed and, if verified as benign, added to an allow-list or exception."],"references":["https://attack.mitre.org/techniques/T1059/001/","https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging_windows"],"author":["Ghaith"],"license":"Elastic License v2","version":1,"exceptions_list":[],"actions":[],"max_signals":100,"related_integrations":[],"required_fields":[{"name":"event.code","type":"keyword","ecs":true},{"name":"powershell.file.script_block_text","type":"text","ecs":false}],"setup":"Requires Winlogbeat forwarding Windows Event Log 'Microsoft-Windows-PowerShell/Operational' with PowerShell Script Block Logging (Event ID 4104) enabled via Group Policy or registry, indexed into winlogbeat-*.","note":"Correlate alerts with Event ID 4103 (Module Logging) for pipeline execution details, and Event ID 800 for classic PowerShell log confirmation."}
+    event.code:"4104" and
+    powershell.file.script_block_text:(
+      "*IEX*" or
+      "*Invoke-Expression*" or
+      "*DownloadString*" or
+      "*WebClient*" or
+      "*Invoke-WebRequest*" or
+      "*http://*" or
+      "*https://*" or
+      "*FromBase64String*" or
+      "*EncodedCommand*" or
+      "*Start-Process*" or
+      "*Add-MpPreference*" or
+      "*-w hidden*" or
+      "*-ep bypass*" or
+      "*AMSI*" or
+      "*Reflection.Assembly*"
+    )
